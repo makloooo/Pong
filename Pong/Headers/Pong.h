@@ -14,15 +14,6 @@ using namespace sf;
 
 #include "GlobalAssets.h"
 
-const float PADDLE_W = 16.f;
-const float PADDLE_H = 64.f;
-
-const float MAX_BOT = 400.f;
-const float MAX_TOP = 140.f;
-
-const float WIN_H_CENTER = 320.f;
-const float WIN_V_CENTER = 240.f;
-
 class Paddle;
 class Ball;
 
@@ -36,9 +27,15 @@ public:
 	void setTarget(Ball*);
 };
 
-class Player : public Controller {
+class PlayerOne : public Controller {
 public:
-	Player(Paddle*);
+	PlayerOne(Paddle*);
+	void move();
+};
+
+class PlayerTwo : public Controller {
+public:
+	PlayerTwo(Paddle*);
 	void move();
 };
 
@@ -50,8 +47,6 @@ public:
 
 class GameObject {
 protected:
-	RenderWindow* window;
-
 	void updateCollider();
 public:
 	Rect<float> collider;
@@ -64,7 +59,7 @@ public:
 
 class ScoreModule {
 public:
-	Paddle* player;
+	Paddle* PlayerOne;
 	int score;
 	Text text;
 
@@ -78,18 +73,22 @@ private:
 	float moveSpeed;
 	Controller* control;
 
+	void setSide(bool);
 public:
 	ScoreModule score;
 
 	using GameObject::collider;
 	using GameObject::render;
-	Paddle(bool, RenderWindow*);
+	Paddle();
+	Paddle(bool);
+	~Paddle();
 
 	Vector2f getPosition();
 	RectangleShape getGraphic();
 	float getSpeed();
 
 	void setTarget(Ball*);
+	void setController(int);
 
 	void move();
 	void render();
@@ -97,8 +96,8 @@ public:
 
 class Ball : public GameObject {
 private:
-	Paddle* player;
-	Paddle* com;
+	Paddle* p1;
+	Paddle* p2;
 
 	Clock clock;
 
@@ -106,7 +105,7 @@ private:
 public:
 	using GameObject::collider;
 
-	Ball(RenderWindow*, Paddle*, Paddle*);
+	Ball(Paddle*, Paddle*);
 	void move();
 	void render();
 

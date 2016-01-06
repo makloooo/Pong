@@ -1,5 +1,8 @@
 #include "../Headers/Pong.h"
 
+const float MAX_BOT = 400.f;
+const float MAX_TOP = 140.f;
+
 /* Controller methods */
 Controller::Controller() {};
 
@@ -7,12 +10,23 @@ void Controller::setTarget(Ball* tracking) {
 	pong = tracking;
 }
 
-Player::Player(Paddle* attached) {
+PlayerOne::PlayerOne(Paddle* attached) {
 	player = attached;
 	pong = NULL;
 }
 
-void Player::move() {
+void PlayerOne::move() {
+	Vector2f currPosition = player->getPosition();
+	if (Keyboard::isKeyPressed(Keyboard::W) && currPosition.y >= MAX_TOP) player->graphic.move(0, -player->getSpeed());
+	if (Keyboard::isKeyPressed(Keyboard::S) && currPosition.y <= MAX_BOT) player->graphic.move(0, player->getSpeed());
+}
+
+PlayerTwo::PlayerTwo(Paddle* attached) {
+	player = attached;
+	pong = NULL;
+}
+
+void PlayerTwo::move() {
 	Vector2f currPosition = player->getPosition();
 	if (Keyboard::isKeyPressed(Keyboard::Up) && currPosition.y >= MAX_TOP) player->graphic.move(0, -player->getSpeed());
 	if (Keyboard::isKeyPressed(Keyboard::Down) && currPosition.y <= MAX_BOT) player->graphic.move(0, player->getSpeed());
@@ -20,7 +34,7 @@ void Player::move() {
 
 AI::AI(Paddle* attached) {
 	player = attached;
-	pong = NULL;
+	this->pong = pong;
 }
 
 void AI::move() {
@@ -35,7 +49,7 @@ void AI::move() {
 GameObject::GameObject() {};
 
 void GameObject::render() {
-	window->draw(graphic);
+	window.draw(graphic);
 }
 
 void GameObject::updateCollider() {
@@ -65,19 +79,29 @@ void ScoreModule::loadScoreText() {
 /* End Score Module Functions */
 
 /* Paddle Methods */
-Paddle::Paddle(bool player, RenderWindow* w) {
-	this->window = w;
+Paddle::Paddle() {
+	moveSpeed = 5.f;
+	control = NULL;
 
+	score.loadScoreText();
+
+	graphic.setSize(Vector2f(PADDLE_W, PADDLE_H));
+	graphic.setFillColor(Color::White);
+
+	updateCollider();
+}
+
+Paddle::Paddle(bool left) {
 	moveSpeed = 5.f;
 
 	score.loadScoreText();
 
 	graphic.setSize(Vector2f(PADDLE_W, PADDLE_H));
 	graphic.setFillColor(Color::White);
-	if (player) {
+	if (left) {
 		graphic.setPosition(40, WIN_V_CENTER - 32);
 		score.text.setPosition(100, 0);
-		control = new Player(this);
+		control = new PlayerOne(this);
 	}
 	else {
 		graphic.setPosition(600, WIN_V_CENTER - 32);
@@ -86,6 +110,10 @@ Paddle::Paddle(bool player, RenderWindow* w) {
 	}
 
 	updateCollider();
+}
+
+Paddle::~Paddle() {
+	if (control != NULL) delete control;
 }
 
 Vector2f Paddle::getPosition() {
@@ -100,6 +128,36 @@ float Paddle::getSpeed() {
 	return moveSpeed;
 }
 
+void Paddle::setController(int type) {
+	if (control != NULL) delete control;
+	if (type == 0) {
+		control = new AI(this);
+		setSide(false);
+	}
+	else if (type == 1) {
+		control = new PlayerOne(this);
+		setSide(true);
+	}
+	else if (type == 2) {
+		control = new PlayerTwo(this);
+		setSide(false);
+	}
+	// std::cout << "Controller set!\n";
+}
+
+void Paddle::setSide(bool left) {
+	if (left) {
+		graphic.setPosition(40, WIN_V_CENTER - 32);
+		score.text.setPosition(100, 0);
+	}
+	else {
+		graphic.setPosition(600, WIN_V_CENTER - 32);
+		score.text.setPosition(520, 0);
+	}
+	updateCollider();
+	// std::cout << "Side set!\n";
+}
+
 void Paddle::setTarget(Ball* tracking) {
 	// Use this for AI only!!
 	control->setTarget(tracking);
@@ -111,23 +169,22 @@ void Paddle::move() {
 }
 
 void Paddle::render() {
-	window->draw(graphic);
-	window->draw(score.text);
+	window.draw(graphic);
+	window.draw(score.text);
 }
 /* End Paddle Methods*/
 
 /* Ball Methods */
-Ball::Ball(RenderWindow* w, Paddle* p, Paddle* c) {
-	window = w;
-	player = p;
-	com = c;
+Ball::Ball(Paddle* p1, Paddle* p2) {
+	this->p1 = p1;
+	this->p2 = p2;
 
 	graphic.setFillColor(Color::White);
 	graphic.setSize(Vector2f(16, 16));
 	graphic.setPosition(WIN_H_CENTER - 8, WIN_V_CENTER - 8);
 	
 	velocity.x = -4;
-	velocity.y = 6;
+	velocity.y = 7;
 }
 
 void Ball::move() {
@@ -138,26 +195,26 @@ void Ball::move() {
 	if (collider.top <= MAX_TOP || collider.top + collider.height >= MAX_BOT) velocity.y *= -1;
 
 	// If the ball collides with the any of the paddles, it will reverse its x-direction
-	if (this->collider.intersects(player->collider)) velocity.x *= -1;
-	if (this->collider.intersects(com->collider)) velocity.x *= -1;
+	if (this->collider.intersects(p1->collider)) velocity.x *= -1;
+	if (this->collider.intersects(p2->collider)) velocity.x *= -1;
 
 	// When the ball moves into a scoring zone
 	if (collider.left <= 0) {
-		com->score.addScore();
+		p2->score.addScore();
 		graphic.setPosition(WIN_H_CENTER - 16, WIN_V_CENTER - 16);
 		velocity.x = -4;
 		clock.restart();
 	}
 	if (collider.left + collider.width >= 640) {
-		player->score.addScore();
+		p1->score.addScore();
 		graphic.setPosition(WIN_H_CENTER - 16, WIN_V_CENTER - 16);
-		velocity.x = -4;
+		velocity.x = 4;
 		clock.restart();
 	}
 }
 
 void Ball::render() {
-	window->draw(graphic);
+	window.draw(graphic);
 }
 
 RectangleShape Ball::getGraphic() {

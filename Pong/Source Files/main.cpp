@@ -14,9 +14,12 @@ using namespace sf;
 
 #include "../Headers/Pong.h"
 #include "../Headers/GlobalAssets.h"
+#include "../Headers/Game.h"
 
-RenderWindow window(VideoMode(640, 480), "SFML Workspace");
+bool inMenu = true;
+bool inGame = false;
 
+/*
 void freeMove(Shape &shape, float v) {
 	if (Keyboard::isKeyPressed(Keyboard::Left)) shape.move(-v, 0);
 	if (Keyboard::isKeyPressed(Keyboard::Right)) shape.move(v, 0);
@@ -24,6 +27,7 @@ void freeMove(Shape &shape, float v) {
 	if (Keyboard::isKeyPressed(Keyboard::Down)) shape.move(0, v);
 	return;
 }
+*/
 
 int main() {
 	window.setFramerateLimit(60);
@@ -33,12 +37,9 @@ int main() {
 		return 1;
 	}
 
-	Paddle player(true, &window);
-	Paddle com(false, &window);
+	int state = 0;
 
-	Ball pong(&window, &player, &com);
-
-	com.setTarget(&pong);
+	initialize();
 
 	while (window.isOpen()) {
 		Event e;
@@ -46,17 +47,14 @@ int main() {
 			if (e.type == Event::Closed)
 				window.close();
 		}
-
-		player.move();
-		com.move();
-		pong.move();
-
-		// Drawing portion
+		
 		window.clear(Color::Black);
-		player.render();
-		com.render();
-		pong.render();
-		window.display(); // "RenderWindow" - Window has a renderer built into it.
+
+		if (state == 0) state = displayMenu(); // State 0
+
+		if (state == 1) state = playGame(); // State 1
+
+		window.display();
 	}
 
 	return 0;
