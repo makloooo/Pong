@@ -33,30 +33,31 @@ int displayMenu() {
 	static int selection = 1; // 1 for first option, decrease with down.
 
 	// Create a cursor
-	if (Keyboard::isKeyPressed(Keyboard::Down) && selection != 0) {
+	if (Keyboard::isKeyPressed(Keyboard::S) && selection != 0) {
 		// Move cursor down
 		pointer.move(Vector2f(0.f, 50.f));
 		--selection;
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Up) && selection != 1) {
+	if (Keyboard::isKeyPressed(Keyboard::W) && selection != 1) {
 		// Move cursor up
 		pointer.move(Vector2f(0.f, -50.f));
 		++selection;
 	}
-	if (Keyboard::isKeyPressed(Keyboard::Space)) {
+	if (Keyboard::isKeyPressed(Keyboard::Return)) {
 		if (selection == 1) {
 			// Start 1p game
 			p1.setController(1); // set p1
 			p2.setController(0); // set com
 			p2.setTarget(&pong);
-			return 1;
 		}
 		else if (selection == 0) {
 			// Start 2p game
 			p1.setController(1); // set p1
 			p2.setController(2); // set p2
-			return 1;
 		}
+		pong.resetClock();
+		pongs.push_back(&pong);
+		return 1;
 	}
 
 	window.draw(menu);
@@ -71,13 +72,18 @@ int playGame() {
 
 	p1.move();
 	p2.move();
-	pong.move();
+	
+	for (int i = 0; i < pongs.size(); ++i) {
+		pongs.at(i)->move();
+	}
 	// std::cout << "Objects moved!\n";
 
 	// Drawing portion
 	p1.render();
 	p2.render();
-	pong.render();
+	for (int i = 0; i < pongs.size(); ++i) {
+		pongs.at(i)->render();
+	}
 
 	if (p1.score.score == 15) {
 		// Player 1 wins

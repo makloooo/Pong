@@ -38,6 +38,7 @@ int main() {
 	}
 
 	int state = 0;
+	srand((unsigned)(time(0)));
 
 	initialize();
 

@@ -25,3 +25,5 @@ void initialize();
 int playGame();
 
 int displayMenu();
+
+void spawnPong();

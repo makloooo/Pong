@@ -26,8 +26,10 @@ extern Paddle p1;
 extern Paddle p2;
 extern Ball pong;
 
-// extern std::vector<Ball*> pongs;
+extern std::vector<Ball*> pongs;
 
 extern Text title;
 extern Text menu;
 extern RectangleShape pointer;
+
+extern float getRandFloat(float LO, float HI);

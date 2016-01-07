@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <ctime>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -43,6 +44,7 @@ class AI : public Controller {
 public:
 	AI(Paddle*);
 	void move();
+	void scanClosest();
 };
 
 class GameObject {
@@ -101,11 +103,17 @@ private:
 
 	Clock clock;
 
+	unsigned index;
 	Vector2f velocity;
 public:
 	using GameObject::collider;
 
 	Ball(Paddle*, Paddle*);
+
+	void spawnPong();
+	void resetClock();
+	void resetPosition(bool);
+
 	void move();
 	void render();
 
