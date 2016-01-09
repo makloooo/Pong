@@ -16,9 +16,6 @@ using namespace sf;
 #include "../Headers/GlobalAssets.h"
 #include "../Headers/Game.h"
 
-bool inMenu = true;
-bool inGame = false;
-
 /*
 void freeMove(Shape &shape, float v) {
 	if (Keyboard::isKeyPressed(Keyboard::Left)) shape.move(-v, 0);
@@ -54,6 +51,8 @@ int main() {
 		if (state == 0) state = displayMenu(); // State 0
 
 		if (state == 1) state = playGame(); // State 1
+
+		if (state == 2) state = displayWinner(); // State 2
 
 		window.display();
 	}

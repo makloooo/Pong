@@ -26,4 +26,6 @@ int playGame();
 
 int displayMenu();
 
+int displayWinner();
+
 void spawnPong();

@@ -91,6 +91,7 @@ public:
 
 	void setTarget(Ball*);
 	void setController(int);
+	void reset();
 
 	void move();
 	void render();
@@ -109,6 +110,7 @@ public:
 	using GameObject::collider;
 
 	Ball(Paddle*, Paddle*);
+	~Ball();
 
 	void spawnPong();
 	void resetClock();

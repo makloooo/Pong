@@ -27,6 +27,15 @@ void initialize() {
 	title.setPosition(Vector2f(getHorizontalCenter(title), getVerticalCenter(title) - 100));
 	menu.setPosition(Vector2f(getHorizontalCenter(menu), getVerticalCenter(menu) + 50));
 	pointer.setPosition(Vector2f(menu.getPosition().x - 30, menu.getPosition().y + 20));
+
+	winner.setString("Nobody wins!");
+	winner.setFont(gFont);
+	winner.setColor(Color::White);
+	winner.setPosition(Vector2f(getHorizontalCenter(winner), getVerticalCenter(winner)));
+	restartPrompt.setString("Want a rematch? Press Q!");
+	restartPrompt.setFont(gFont);
+	restartPrompt.setColor(Color::White);
+	restartPrompt.setPosition(Vector2f(getHorizontalCenter(restartPrompt), getVerticalCenter(restartPrompt) - 100));
 }
 
 int displayMenu() {
@@ -73,7 +82,7 @@ int playGame() {
 	p1.move();
 	p2.move();
 	
-	for (int i = 0; i < pongs.size(); ++i) {
+	for (unsigned i = 0; i < pongs.size(); ++i) {
 		pongs.at(i)->move();
 	}
 	// std::cout << "Objects moved!\n";
@@ -81,18 +90,38 @@ int playGame() {
 	// Drawing portion
 	p1.render();
 	p2.render();
-	for (int i = 0; i < pongs.size(); ++i) {
+	for (unsigned i = 0; i < pongs.size(); ++i) {
 		pongs.at(i)->render();
 	}
 
-	if (p1.score.score == 15) {
+	if (p1.score.score == 30) {
 		// Player 1 wins
+		winner.setString("Player 1 wins!");
+		return 2;
 	}
-	else if (p2.score.score == 15) {
+	else if (p2.score.score == 30) {
 		// Player 2 wins
+		winner.setString("Player 2 wins!");
+		return 2;
 	}
 
 
 	// std::cout << "Objects drawn!\n";
 	return 1;
+}
+
+int displayWinner() {
+	window.draw(winner);
+	window.draw(restartPrompt);
+	if (Keyboard::isKeyPressed(Keyboard::Q)) {
+		p1.score.score = 0;
+		p2.score.score = 0;
+		while (!pongs.empty()) pongs.pop_back();
+		pong.resetClock();
+		pong.resetPosition(true);
+		pongs.push_back(&pong);
+		std::cout << "Values reset!\n";
+		return 1;
+	}
+	return 2;
 }

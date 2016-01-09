@@ -19,6 +19,9 @@ Text title;
 Text menu;
 RectangleShape pointer;
 
+Text winner;
+Text restartPrompt;
+
 float getRandFloat(float LO, float HI) {
 	return LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
 }

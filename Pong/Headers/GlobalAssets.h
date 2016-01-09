@@ -32,4 +32,7 @@ extern Text title;
 extern Text menu;
 extern RectangleShape pointer;
 
+extern Text winner;
+extern Text restartPrompt;
+
 extern float getRandFloat(float LO, float HI);

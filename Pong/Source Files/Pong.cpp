@@ -174,6 +174,10 @@ void Paddle::setTarget(Ball* tracking) {
 	control->setTarget(tracking);
 }
 
+void Paddle::reset() {
+	this->score.score = 0;
+}
+
 void Paddle::move() {
 	control->move();
 	updateCollider();
@@ -196,6 +200,11 @@ Ball::Ball(Paddle* p1, Paddle* p2) {
 
 	velocity.x = -4;
 	velocity.y = 6;
+}
+
+Ball::~Ball() {
+	p1 = NULL;
+	p2 = NULL;
 }
 
 void Ball::resetClock() {
@@ -244,8 +253,7 @@ void Ball::move() {
 		else {
 			pongs.erase((pongs.begin() + index));
 			for (unsigned i = index; i < pongs.size(); ++i) pongs.at(i)->index -= 1;
-			p2->setTarget(pongs.at(0));
-			std::cout << "Killed pong at index " << index << "!\n";
+			std::cout << "Killing pong at index " << index << "!\n";
 			//delete this;
 		}
 	}
@@ -255,8 +263,7 @@ void Ball::move() {
 		else {
 			pongs.erase((pongs.begin() + index));
 			for (unsigned i = index; i < pongs.size(); ++i) pongs.at(i)->index -= 1;
-			p2->setTarget(pongs.at(0));
-			std::cout << "Killed pong at index " << index << "!\n";
+			std::cout << "Killing pong at index " << index << "!\n";
 			//delete this;
 		}
 	}
