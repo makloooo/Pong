@@ -24,7 +24,6 @@ extern const float WIN_V_CENTER;
 
 extern Paddle p1;
 extern Paddle p2;
-extern Ball pong;
 
 extern std::vector<Ball*> pongs;
 

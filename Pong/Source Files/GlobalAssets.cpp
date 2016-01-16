@@ -11,7 +11,6 @@ const float WIN_V_CENTER = 240.f;
 
 Paddle p1;
 Paddle p2;
-Ball pong(&p1, &p2);
 
 std::vector<Ball*> pongs;
 

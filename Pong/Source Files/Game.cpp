@@ -53,19 +53,20 @@ int displayMenu() {
 		++selection;
 	}
 	if (Keyboard::isKeyPressed(Keyboard::Return)) {
+		pongs.push_back(new Ball(&p1, &p2));
+		pongs.at(0)->resetClock();
 		if (selection == 1) {
 			// Start 1p game
 			p1.setController(1); // set p1
 			p2.setController(0); // set com
-			p2.setTarget(&pong);
+			p2.setTarget(pongs.at(0));
 		}
 		else if (selection == 0) {
 			// Start 2p game
 			p1.setController(1); // set p1
 			p2.setController(2); // set p2
 		}
-		pong.resetClock();
-		pongs.push_back(&pong);
+		
 		return 1;
 	}
 
@@ -117,9 +118,9 @@ int displayWinner() {
 		p1.score.score = 0;
 		p2.score.score = 0;
 		while (!pongs.empty()) pongs.pop_back();
-		pong.resetClock();
-		pong.resetPosition(true);
-		pongs.push_back(&pong);
+		pongs.push_back(new Ball(&p1, &p2));
+		pongs.front()->resetClock();
+		pongs.front()->resetPosition(true);
 		std::cout << "Values reset!\n";
 		return 1;
 	}

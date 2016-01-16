@@ -1,6 +1,6 @@
 #include "../Headers/Pong.h"
 
-const float MAX_BOT = 400.f;
+const float MAX_BOT = 380.f;
 const float MAX_TOP = 140.f;
 
 /* Controller methods */
@@ -254,7 +254,7 @@ void Ball::move() {
 			pongs.erase((pongs.begin() + index));
 			for (unsigned i = index; i < pongs.size(); ++i) pongs.at(i)->index -= 1;
 			std::cout << "Killing pong at index " << index << "!\n";
-			//delete this;
+			delete this;
 		}
 	}
 	if (collider.left + collider.width >= 640) {
@@ -264,7 +264,7 @@ void Ball::move() {
 			pongs.erase((pongs.begin() + index));
 			for (unsigned i = index; i < pongs.size(); ++i) pongs.at(i)->index -= 1;
 			std::cout << "Killing pong at index " << index << "!\n";
-			//delete this;
+			delete this;
 		}
 	}
 }
